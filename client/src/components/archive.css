@@ -1,0 +1,102 @@
+.archive {
+  text-align: center;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.sign-in-message {
+  color: lightgreen;
+  padding-top: 120px;
+  font-size: 2.4rem;
+  font-weight: 500;
+}
+
+.month-title {
+  font-size: 3rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-grid button {
+  width: 140px;
+  height: 97px;
+}
+
+.day-label {
+  font-size: 1rem;
+  height: 50px;
+  padding: 0;
+  margin: 0;
+  background: none;
+  color: #CCCCCC;
+}
+
+.calendar-blank {
+  background: none;
+}
+
+.calendar-blank:hover {
+  cursor:default;
+}
+
+.archive-nav-buttons {
+  width: 1230px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  height: 40px;
+  padding-top: 80px;
+}
+
+.archive-nav-buttons button {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  background: none;
+  color: white;
+  font-weight: bold;
+  font-size: 3rem;
+}
+
+.archive-nav-buttons button:hover {
+  cursor: pointer;
+  color: grey;
+}
+
+
+.invalid-day:hover {
+  cursor: default;
+}
+
+.invalid-day, .valid-day {
+  width: 140px;
+  height: 97px;
+  text-decoration: none;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: black;
+  font-weight: bold;
+}
+
+.invalid-day {
+  background-color: grey;
+}
+
+.valid-day {
+  background-color: white;
+}
+
+.valid-day:hover {
+  cursor: pointer;
+}
