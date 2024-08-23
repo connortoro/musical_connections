@@ -17,21 +17,26 @@ function Game() {
   const [jumpingButtons, setJumpingButtons] = useState([])
   const [puzzleId, setPuzzleId] = useState()
   const [userId, setUserId] = useState();
+  const [checkDisabled, setCheckDisabled] = useState(false)
 
   let { date } = useParams();
-  const puzzleDate = date ? new Date(date) : new Date(2024, 7, 19)
+  const puzzleDate = date ? new Date(date) : new Date()
 
   const { user, isLoaded, isSignedIn } = useUser();
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
+    if (isLoaded && isSignedIn && !userId) {
       setUserId(user.id);
     }
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, user?.id]);
 
   const check = () => {
     if(choices.length !== 4 || guessesLeft.length === 0) {
       return;
     }
+    setCheckDisabled(true)
+    // setTimeout(() => {
+    //   setCheckDisabled(false)
+    // }, 1000);
     if(choices.every(choice => choice.key === choices[0].key)) {
       jump();
       setTimeout(() => {
@@ -44,35 +49,44 @@ function Game() {
         removeGroupFromGrid(choices[0].key)
         setChoices([]);
         setMessage("");
+        setCheckDisabled(false)
       }, 1000);
     } else {
       shake()
       if(guessesLeft.length === 2){
-        let audio = new Audio('/audio/wah-wah-sad-trombone-6347.mp3');
-        audio.play();
-        setTimeout(() => {
-          setCorrectGroups([])
-          setMessage("")
-          setGrid([])
-        }, 1000)
+        fail()
+        setMessage("")
       } else if(isOneAway()){
         setMessage("One Away...");
       } else {
         setMessage("Incorrect :(")
       }
       setGuessesLeft((guessesLeft) => guessesLeft.slice(0, -2));
+      setCheckDisabled(false)
     }
   }
 
   const win = async () => {
     if(userId) {
       console.log('puzzleid: ', puzzleId)
-      const response = await axios.post('http://localhost:3500/attempt', {
+      await axios.post('http://localhost:3500/attempt', {
         user: userId,
         puzzle: puzzleId,
         status: 'win'
       })
     }
+  }
+
+  const fail = async () => {
+    if(userId) {
+      console.log('puzzleid: ', puzzleId)
+      await axios.post('http://localhost:3500/attempt', {
+        user: userId,
+        puzzle: puzzleId,
+        status: 'fail'
+      })
+    }
+    fillCorrect()
   }
 
   const shake = () => {
@@ -139,42 +153,48 @@ function Game() {
 
   const fillCorrect = () => {
     console.log("fillingingingingin");
-    // let tempGroups = [];
-    // for (let i = 1; i < 5; i++) {
-    //   let group = grid.flat().filter((cell) => cell.key === i);
-    //   if (group.length === 4) {
-    //     tempGroups.push(group);
-    //   }
-    // }
-    // setCorrectGroups((prevCorrectGroups) => [...prevCorrectGroups, ...tempGroups]);
-    // setGrid([]);
+    let tempGroups = [];
+    for (let i = 1; i < 5; i++) {
+      let group = grid.flat().filter((cell) => cell.key === i);
+      if (group.length === 4) {
+        tempGroups.push(group);
+      }
+    }
+    setCorrectGroups((prevCorrectGroups) => [...prevCorrectGroups, ...tempGroups]);
+    setGrid([]);
   }
 
   useEffect(() => {
-    if(userId !== null) {
-      axios.get(`http://localhost:3500/puzzle/`, { params: { date: puzzleDate }}).then(puzzleResponse => {
-        setPuzzleId(puzzleResponse.data._id)
-        axios.get('http://localhost:3500/attempt/', { params: { user: userId, puzzle: puzzleResponse.data._id }}).then(attemptResponse => {
-          setKeyMap(puzzleResponse.data.key)
-          console.log(attemptResponse.data.status)
-          if (attemptResponse.data.status === 'win') {
-            fillCorrect()
-            setMessage("You've Won!")
-          } else if (attemptResponse.data.status === 'fail') {
-            fillCorrect()
-            setGuessesLeft('')
-          } else {
-            console.log('elsing!')
-            setGrid(shuffleGrid(puzzleResponse.data.grid))
-          }
-        })
+    const controller = new AbortController()
+    axios.get(`http://localhost:3500/puzzle/`, { params: { date: puzzleDate.toLocaleDateString() }, signal: controller.signal})
+    .then(puzzleResponse => {
+      setPuzzleId(puzzleResponse.data._id)
+      setKeyMap(puzzleResponse.data.key)
+      setGrid(shuffleGrid(puzzleResponse.data.grid))
+    })
+    .catch(error => console.error('Error:', error));
+    return () => controller.abort()
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController()
+    if(userId && userId) {
+      axios.get('http://localhost:3500/attempt/', { params: { user: userId, puzzle: puzzleId }, signal: controller.signal})
+      .then(attemptResponse => {
+        if (attemptResponse.data.status === 'win') {
+          fillCorrect()
+          setMessage("You've Won!")
+        } else if (attemptResponse.data.status === 'fail') {
+          fillCorrect()
+          setGuessesLeft('')
+        } 
       })
       .catch(error => {
         console.error('Error:', error);
       });
     }
-      
-  }, [userId, date]);
+    return () => controller.abort()
+  }, [puzzleId, userId]);
 
   const cellClassName = (text) => {
     
@@ -205,10 +225,10 @@ function Game() {
       <div className='container'>
         <div className='game'>
           <h3 className='message'>{message}</h3>
+          {grid.length === 0 && guessesLeft.length === 0 && <h1 className='failure-message'>YOU FAILED :(</h1>}
           {correctGroups.map((group) => {
             return <CorrectGroup choices={[...group]} groupKey={keyMap[group[0].key]} key={group[0].key}/>
           })}
-          {grid.length === 0 && guessesLeft.length === 0 && <h1 className='failure-message'>YOU FAILED :(</h1>}
           {grid.map((row, rowIdx) => {
             return <div key={rowIdx} className='row'>
               {row.map((cell, colIdx) => {
@@ -225,7 +245,7 @@ function Game() {
           <div className='foot'>
             <div>
               <button onClick={shuffleCurrentGrid}>Shuffle</button>
-              <button onClick={check} className='check-button'>Check</button>
+              <button onClick={check} className='check-button' disabled={checkDisabled}>Check</button>
             </div>
             <span className='guesses-left'>{guessesLeft}</span>
           </div>

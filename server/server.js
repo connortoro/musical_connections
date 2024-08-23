@@ -22,15 +22,12 @@ const db_connect = async () => {
 
 app.get('/puzzle', async (req, res) => {
   const reqDate = req.query.date;
-  const date = reqDate ? new Date(reqDate) : new Date();
-
-  const start = new Date(date)
-  const end = new Date(start)
-  start.setHours(0, 0, 0, 0)
-  end.setHours(23, 59, 59, 999)
+  const date = new Date(reqDate)
+  date.setHours(-7, 0, 0, 0)
+  console.log(date)
 
   const puzzle = await puzzleTable.findOne({
-    date: { $gte: start, $lte: end }
+    date: date
   }).lean();
   if(!puzzle) {
     res.status(404).send("no puzzle found papi")
@@ -43,8 +40,6 @@ app.get('/puzzle', async (req, res) => {
 
 app.get('/attempt', async (req, res) => {
   const { user, puzzle } = req.query;
-  console.log(user)
-  console.log(puzzle)
   const attempt = await attemptTable.findOne({
     user: user,
     puzzle: puzzle
@@ -67,25 +62,33 @@ app.post('/attempt', async (req, res) => {
   res.status(201).json({status: "success"})
 })
 
+app.get('/attempts', async (req, res) => {
+  const { user } = req.query;
+  const attempts = await attemptTable.find({
+    user: user,
+  })
+
+})
+
 db_connect()
 
-// const grid = {
-//     grid: [
-//       [{"text": "Love Story", "key": 1}, {"text": "Espresso", "key": 2}, {"text": "Bags", "key": 3}, {"text": "360", "key": 4}],
-//       [{"text": "Anti-Hero", "key": 1}, {"text": "Please Please Please", "key": 2}, {"text": "4EVER", "key": 3}, {"text": "Good Ones", "key": 4}],
-//       [{"text": "Shake It Offf", "key": 1}, {"text": "Nonsense", "key": 2}, {"text": "Flaming Hot Cheetos", "key": 3}, {"text": "1999", "key": 4}],
-//       [{"text": "You Belong With Me", "key": 1}, {"text": "Feather", "key": 2}, {"text": "Sofia", "key": 3}, {"text": "Apple", "key": 4}]
-//     ],
-//     key: {
-//       "1": "Taylor Swift",
-//       "2": "Sabrina Carpenter",
-//       "3": "Clairo",
-//       "4": "Charli XCX"
-//     },
-//     date: new Date(2024, 7, 20, 12, 0, 0, 0)
-// }
+// const newGrid = {
+//   grid: [
+//     [{"text": "Stairway to Heaven", "key": 1}, {"text": "Wish You Were Here", "key": 2}, {"text": "Patience", "key": 3}, {"text": "Bohemian Rhapsody", "key": 4}],
+//     [{"text": "Hotel California", "key": 1}, {"text": "Comfortably Numb", "key": 2}, {"text": "Paradise City", "key": 3}, {"text": "We Are the Champions", "key": 4}],
+//     [{"text": "Whole Lotta Love", "key": 1}, {"text": "Another Brick in the Wall", "key": 2}, {"text": "Welcome to the Jungle", "key": 3}, {"text": "Under Pressure'", "key": 4}],
+//     [{"text": "When the Levee Breaks", "key": 1}, {"text": "Money", "key": 2}, {"text": "Sweet Child O' Mine", "key": 3}, {"text": "Killer Queen", "key": 4}]
+//   ],
+//   key: {
+//     "1": "Led Zeppelin",
+//     "2": "Pink Floyd",
+//     "4": "Guns N' Roses",
+//     "3": "Queen"
+//   },
+//   date: new Date(2024, 7, 20, 17, 0, 0, 0)
+// };
 
-// const newPuzzle = new puzzleTable(grid)
+// const newPuzzle = new puzzleTable(newGrid)
 // newPuzzle.save()
 
 app.listen(port, async () => {

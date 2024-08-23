@@ -39,7 +39,6 @@ function Month({ month }) {
 
   return (
     <div className='month'>
-      <h1 className='month-title'>{month.toLocaleString('en-US', {month: 'long'}) + ' ' + month.getFullYear()}</h1>
       <div className='calendar-grid'>
         {DAY_LABELS.map((day) => {
           return <button className='day-label' key={day}>{day}</button>

@@ -40,6 +40,7 @@ function Archive() {
       <SignedIn>
       <div className='archive-nav-buttons'>
           <button onClick={monthBack}>{'←'}</button>
+          <h1 className='month-title'>{month.toLocaleString('en-US', {month: 'long'}) + ' ' + month.getFullYear()}</h1>
           <button onClick={monthForward}>{'→'}</button>
         </div>
         <div className='archive'>
