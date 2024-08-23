@@ -2,6 +2,7 @@ import { SignedIn, SignedOut} from '@clerk/clerk-react'
 import { useState, useEffect } from 'react';
 import Month from './month';
 import './archive.css';
+import { useUser } from '@clerk/clerk-react';
 
 function Archive() {
 
@@ -9,6 +10,13 @@ function Archive() {
   const TODAYS_DATE = new Date();
 
   const [month, setMonth] = useState(TODAYS_DATE);
+  const [userId, setUserId] = useState();
+  const { user, isLoaded, isSignedIn } = useUser();
+  useEffect(() => {
+    if (isLoaded && isSignedIn && !userId) {
+      setUserId(user.id);
+    }
+  }, [isLoaded, isSignedIn, user?.id]);
 
   const monthBack = () => {
     let newDate = new Date(month.getFullYear(), month.getMonth() - 1, 25)
@@ -44,7 +52,7 @@ function Archive() {
           <button onClick={monthForward}>{'→'}</button>
         </div>
         <div className='archive'>
-          <Month month={month}></Month>
+          <Month month={month} user={userId}></Month>
         </div>
       </SignedIn>
     </div>

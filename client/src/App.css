@@ -1,5 +1,5 @@
 html {
-  background-color: #222224;
+  background-color: #1B1917;
 }
 
 .game {
@@ -8,9 +8,6 @@ html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  width: 100%;
-  background-color: #222224;
 }
 
  .container{
@@ -18,8 +15,6 @@ html {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  width: 100%;
 }
 
 h4 {
@@ -111,14 +106,13 @@ button:hover {
   min-width: 130px;
 }
 
-.failure-message {
-  color: lightcoral;
-  margin-bottom: 100px;
+.result-message {
+  margin-bottom: 45px;
 }
 
 .foot button {
   border-radius: 30px;
-  background-color: #222224;
+  background-color: #1B1917;
   color: white;
   border: 1px solid white;
 }
@@ -181,10 +175,4 @@ button:hover {
   50% {
     transform: translateY(-15px);
   }
-}
-
-.loading-message {
-  color: white;
-  padding-top: 200px;
-  font-size: 3rem;
 }

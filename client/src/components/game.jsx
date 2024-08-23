@@ -18,9 +18,10 @@ function Game() {
   const [puzzleId, setPuzzleId] = useState()
   const [userId, setUserId] = useState();
   const [checkDisabled, setCheckDisabled] = useState(false)
+  const [guesses, setGuesses] = useState([])
 
   let { date } = useParams();
-  const puzzleDate = date ? new Date(date) : new Date()
+  const[puzzleDate, setPuzzleDate] = useState(date ? new Date(date) : new Date())
 
   const { user, isLoaded, isSignedIn } = useUser();
   useEffect(() => {
@@ -34,9 +35,12 @@ function Game() {
       return;
     }
     setCheckDisabled(true)
-    // setTimeout(() => {
-    //   setCheckDisabled(false)
-    // }, 1000);
+    if(guessed()) {
+      setMessage('Already Guessed...')
+      setCheckDisabled(false);
+      return;
+    }
+
     if(choices.every(choice => choice.key === choices[0].key)) {
       jump();
       setTimeout(() => {
@@ -64,6 +68,17 @@ function Game() {
       setGuessesLeft((guessesLeft) => guessesLeft.slice(0, -2));
       setCheckDisabled(false)
     }
+  }
+
+  const guessed = () => {
+    const sortedArr1 = choices.slice().sort();
+    for(const guess of guesses) {
+      if(sortedArr1.every((cell, i) => cell === guess[i])) {
+        return true
+      }
+    }
+    setGuesses((prevGuesses) => [...prevGuesses, sortedArr1])
+    return false;
   }
 
   const win = async () => {
@@ -152,7 +167,6 @@ function Game() {
   }
 
   const fillCorrect = () => {
-    console.log("fillingingingingin");
     let tempGroups = [];
     for (let i = 1; i < 5; i++) {
       let group = grid.flat().filter((cell) => cell.key === i);
@@ -165,16 +179,21 @@ function Game() {
   }
 
   useEffect(() => {
+    setPuzzleDate(date ? new Date(date) : new Date());
+  }, [date]);
+
+  useEffect(() => {
     const controller = new AbortController()
     axios.get(`http://localhost:3500/puzzle/`, { params: { date: puzzleDate.toLocaleDateString() }, signal: controller.signal})
     .then(puzzleResponse => {
+      setCorrectGroups([])
       setPuzzleId(puzzleResponse.data._id)
       setKeyMap(puzzleResponse.data.key)
       setGrid(shuffleGrid(puzzleResponse.data.grid))
     })
     .catch(error => console.error('Error:', error));
     return () => controller.abort()
-  }, []);
+  }, [puzzleDate]);
 
   useEffect(() => {
     const controller = new AbortController()
@@ -183,7 +202,6 @@ function Game() {
       .then(attemptResponse => {
         if (attemptResponse.data.status === 'win') {
           fillCorrect()
-          setMessage("You've Won!")
         } else if (attemptResponse.data.status === 'fail') {
           fillCorrect()
           setGuessesLeft('')
@@ -225,7 +243,7 @@ function Game() {
       <div className='container'>
         <div className='game'>
           <h3 className='message'>{message}</h3>
-          {grid.length === 0 && guessesLeft.length === 0 && <h1 className='failure-message'>YOU FAILED :(</h1>}
+          {grid.length === 0 && <h1 style={{color: guessesLeft.length === 0 ? '#ec644b' : '#A0C35A'}}className='result-message'>{guessesLeft.length === 0 ? "You've Failed 👺" : "You Won 🐸"}</h1>}
           {correctGroups.map((group) => {
             return <CorrectGroup choices={[...group]} groupKey={keyMap[group[0].key]} key={group[0].key}/>
           })}

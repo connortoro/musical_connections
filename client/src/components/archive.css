@@ -15,7 +15,7 @@
 }
 
 .month-title {
-  font-size: 3rem;
+  font-size: 2.35rem;
   
 }
 
@@ -25,8 +25,8 @@
 }
 
 .calendar-grid button {
-  width: 140px;
-  height: 97px;
+  width: 120px;
+  height: 85px;
 }
 
 .day-label {
@@ -51,14 +51,14 @@
 }
 
 .archive-nav-buttons {
-  width: 1230px;
+  width: 900px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-bottom: 0;
-  margin-bottom: 0;
+  margin-bottom: 35px;
   height: 40px;
-  padding-top: 80px;
+  padding-top: 50px;
 }
 
 .archive-nav-buttons button {
@@ -67,7 +67,7 @@
   background: none;
   color: white;
   font-weight: bold;
-  font-size: 3rem;
+  font-size: 4rem;
 }
 
 .archive-nav-buttons button:hover {
@@ -80,11 +80,11 @@
   cursor: default;
 }
 
-.invalid-day, .valid-day {
-  width: 140px;
-  height: 97px;
+.invalid-day, .valid-day, .win-day, .fail-day {
+  width: 120px;
+  height: 85px;
   text-decoration: none;
-  border-radius: 15px;
+  border-radius: 10px;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
@@ -96,6 +96,7 @@
 
 .invalid-day {
   background-color: grey;
+  color: #292929;
 }
 
 .valid-day {
@@ -104,4 +105,18 @@
 
 .valid-day:hover {
   cursor: pointer;
+}
+
+.win-day {
+  font-size: 2rem;
+  background-color: #A0C35A;
+  color: darkgreen;
+  font-weight: 400;
+}
+
+.fail-day {
+  font-size: 2rem;
+  color: darkred;
+  background-color: #ec644b;
+  font-weight: 400;
 }

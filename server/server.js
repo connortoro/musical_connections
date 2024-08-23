@@ -21,14 +21,13 @@ const db_connect = async () => {
 }
 
 app.get('/puzzle', async (req, res) => {
-  const reqDate = req.query.date;
-  const date = new Date(reqDate)
-  date.setHours(-7, 0, 0, 0)
-  console.log(date)
+  const [month, day, year] = req.query.date.split('/').map(Number);
+  const date = Date.UTC(year, month - 1, day)
 
   const puzzle = await puzzleTable.findOne({
     date: date
   }).lean();
+
   if(!puzzle) {
     res.status(404).send("no puzzle found papi")
     console.log("puzzle not found")
@@ -64,28 +63,50 @@ app.post('/attempt', async (req, res) => {
 
 app.get('/attempts', async (req, res) => {
   const { user } = req.query;
+  const [month, day, year] = req.query.date.split('/').map(Number)
+
+  const start = Date.UTC(year, month - 1 , 1)
+  const end = Date.UTC(year, month , 0)
+
   const attempts = await attemptTable.find({
     user: user,
   })
 
+  let wins = []
+  let fails = []
+
+  for(const attempt of attempts) {
+    let puzzle = await puzzleTable.findById(attempt.puzzle)
+    let date = new Date(puzzle.date)
+
+    if(date >= start && date <= end) {
+      if(attempt.status === 'win') {
+        
+        wins.push(date.getUTCDate())
+      } else if(attempt.status === 'fail') {
+        fails.push(date.getUTCDate())
+      }
+    }
+  }
+  res.status(200).json({wins: wins, fails: fails})
 })
 
 db_connect()
 
 // const newGrid = {
 //   grid: [
-//     [{"text": "Stairway to Heaven", "key": 1}, {"text": "Wish You Were Here", "key": 2}, {"text": "Patience", "key": 3}, {"text": "Bohemian Rhapsody", "key": 4}],
-//     [{"text": "Hotel California", "key": 1}, {"text": "Comfortably Numb", "key": 2}, {"text": "Paradise City", "key": 3}, {"text": "We Are the Champions", "key": 4}],
-//     [{"text": "Whole Lotta Love", "key": 1}, {"text": "Another Brick in the Wall", "key": 2}, {"text": "Welcome to the Jungle", "key": 3}, {"text": "Under Pressure'", "key": 4}],
-//     [{"text": "When the Levee Breaks", "key": 1}, {"text": "Money", "key": 2}, {"text": "Sweet Child O' Mine", "key": 3}, {"text": "Killer Queen", "key": 4}]
+//     [{"text": "Shape of You", "key": 1}, {"text": "Uptown Funk", "key": 2}, {"text": "Bad Guy", "key": 3}, {"text": "Shake It Off", "key": 4}],
+//     [{"text": "Perfect", "key": 1}, {"text": "Just the Way You Are", "key": 2}, {"text": "Ocean Eyes", "key": 3}, {"text": "Blank Space", "key": 4}],
+//     [{"text": "Thinking Out Loud", "key": 1}, {"text": "Grenade", "key": 2}, {"text": "Everything I Wanted", "key": 3}, {"text": "Love Story", "key": 4}],
+//     [{"text": "I See Fire", "key": 1}, {"text": "Locked Out of Heaven", "key": 2}, {"text": "Birds of a Feather", "key": 3}, {"text": "You Belong with Me", "key": 4}]
 //   ],
 //   key: {
-//     "1": "Led Zeppelin",
-//     "2": "Pink Floyd",
-//     "4": "Guns N' Roses",
-//     "3": "Queen"
+//     "1": "Ed Sheeran",
+//     "2": "Bruno Mars",
+//     "3": "Billie Eilish",
+//     "4": "Taylor Swift"
 //   },
-//   date: new Date(2024, 7, 20, 17, 0, 0, 0)
+//   date: new Date(2024, 7, 22, 17, 0, 0, 0)
 // };
 
 // const newPuzzle = new puzzleTable(newGrid)
