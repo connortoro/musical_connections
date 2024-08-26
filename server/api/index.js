@@ -1,15 +1,24 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3500;
-const cors = require('cors');
 require('dotenv').config();
-app.use(express.json());
-app.use(cors());
 const mongoose = require('mongoose')
 const puzzleTable = require('./models/puzzle')
 const attemptTable = require('./models/attempt')
 
 const MONGO_DB_URL = `mongodb+srv://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PWD}@cluster0.8e9h1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
+
+
+const corsOptions = {
+  origin: true, //process.env.CLIENT_URL , 
+  methods: 'GET,POST,PUT,DELETE',
+  credentials: true, 
+  allowedHeaders: '*', 
+};
+const cors = require('cors');
+app.use(cors(corsOptions));
+app.use(express.json());
+
 
 const db_connect = async () => {
   try {
@@ -20,6 +29,8 @@ const db_connect = async () => {
   }
 }
 
+app.get("/", (req, res) => res.send("Express on Vercel"));
+
 app.get('/puzzle', async (req, res) => {
   const [month, day, year] = req.query.date.split('/').map(Number);
   const date = Date.UTC(year, month - 1, day)
@@ -29,7 +40,7 @@ app.get('/puzzle', async (req, res) => {
   }).lean();
 
   if(!puzzle) {
-    res.status(404).send("no puzzle found papi")
+    res.status(200).json({grid: [], key: {}, puzzleId: ''})
     console.log("puzzle not found")
   } else {
     res.status(200).json(puzzle)
@@ -95,23 +106,26 @@ db_connect()
 
 // const newGrid = {
 //   grid: [
-//     [{"text": "Shape of You", "key": 1}, {"text": "Uptown Funk", "key": 2}, {"text": "Bad Guy", "key": 3}, {"text": "Shake It Off", "key": 4}],
-//     [{"text": "Perfect", "key": 1}, {"text": "Just the Way You Are", "key": 2}, {"text": "Ocean Eyes", "key": 3}, {"text": "Blank Space", "key": 4}],
-//     [{"text": "Thinking Out Loud", "key": 1}, {"text": "Grenade", "key": 2}, {"text": "Everything I Wanted", "key": 3}, {"text": "Love Story", "key": 4}],
-//     [{"text": "I See Fire", "key": 1}, {"text": "Locked Out of Heaven", "key": 2}, {"text": "Birds of a Feather", "key": 3}, {"text": "You Belong with Me", "key": 4}]
+//     [{"text": "Für Elise", "key": 1}, {"text": "Eine kleine Nachtmusik", "key": 2}, {"text": "So What", "key": 3}, {"text": "Nocturne in E-flat major", "key": 4}],
+//     [{"text": "Symphony No. 5", "key": 1}, {"text": "The Magic Flute", "key": 2}, {"text": "Blue in Green", "key": 3}, {"text": "Fantaisie-Impromptu", "key": 4}],
+//     [{"text": "Moonlight Sonata", "key": 1}, {"text": "Symphony No. 40", "key": 2}, {"text": "All Blues", "key": 3}, {"text": "Funeral March", "key": 4}],
+//     [{"text": "Ode to Joy", "key": 1}, {"text": "Requiem", "key": 2}, {"text": "Round Midnight", "key": 3}, {"text": "Minute Waltz", "key": 4}]
 //   ],
 //   key: {
-//     "1": "Ed Sheeran",
-//     "2": "Bruno Mars",
-//     "3": "Billie Eilish",
-//     "4": "Taylor Swift"
+//     "1": "Ludwig van Beethoven",
+//     "2": "Wolfgang Amadeus Mozart",
+//     "3": "Miles Davis",
+//     "4": "Frédéric Chopin"
 //   },
-//   date: new Date(2024, 7, 22, 17, 0, 0, 0)
+//   date: new Date(2024, 7, 25, 17, 0, 0, 0)
 // };
 
 // const newPuzzle = new puzzleTable(newGrid)
 // newPuzzle.save()
 
-app.listen(port, async () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+
+module.exports = app;
+
+// app.listen(port, async () => {
+//   console.log(`Server running on http://localhost:${port}`);
+// });

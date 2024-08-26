@@ -108,15 +108,15 @@
 }
 
 .win-day {
-  font-size: 2rem;
+  font-size: 1.5rem;
   background-color: #A0C35A;
   color: darkgreen;
-  font-weight: 400;
+  font-weight: 800;
 }
 
 .fail-day {
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: darkred;
   background-color: #ec644b;
-  font-weight: 400;
+  font-weight: 800;
 }

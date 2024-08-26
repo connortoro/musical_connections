@@ -22,6 +22,7 @@ function Game() {
 
   let { date } = useParams();
   const[puzzleDate, setPuzzleDate] = useState(date ? new Date(date) : new Date())
+  const DATABASE_URL = process.env.REACT_APP_API_URL
 
   const { user, isLoaded, isSignedIn } = useUser();
   useEffect(() => {
@@ -84,7 +85,7 @@ function Game() {
   const win = async () => {
     if(userId) {
       console.log('puzzleid: ', puzzleId)
-      await axios.post('http://localhost:3500/attempt', {
+      await axios.post(`${DATABASE_URL}attempt`, {
         user: userId,
         puzzle: puzzleId,
         status: 'win'
@@ -95,7 +96,7 @@ function Game() {
   const fail = async () => {
     if(userId) {
       console.log('puzzleid: ', puzzleId)
-      await axios.post('http://localhost:3500/attempt', {
+      await axios.post(`${DATABASE_URL}attempt`, {
         user: userId,
         puzzle: puzzleId,
         status: 'fail'
@@ -183,9 +184,11 @@ function Game() {
   }, [date]);
 
   useEffect(() => {
+    console.log("Requesting: ", `${DATABASE_URL}puzzle/`)
     const controller = new AbortController()
-    axios.get(`http://localhost:3500/puzzle/`, { params: { date: puzzleDate.toLocaleDateString() }, signal: controller.signal})
+    axios.get(`${DATABASE_URL}puzzle/`, { params: { date: puzzleDate.toLocaleDateString() }, signal: controller.signal})
     .then(puzzleResponse => {
+      console.log("PUZZLE: ", puzzleResponse.data)
       setCorrectGroups([])
       setPuzzleId(puzzleResponse.data._id)
       setKeyMap(puzzleResponse.data.key)
@@ -198,7 +201,7 @@ function Game() {
   useEffect(() => {
     const controller = new AbortController()
     if(userId && userId) {
-      axios.get('http://localhost:3500/attempt/', { params: { user: userId, puzzle: puzzleId }, signal: controller.signal})
+      axios.get(`${DATABASE_URL}attempt`, { params: { user: userId, puzzle: puzzleId }, signal: controller.signal})
       .then(attemptResponse => {
         if (attemptResponse.data.status === 'win') {
           fillCorrect()
@@ -242,8 +245,8 @@ function Game() {
     <div>
       <div className='container'>
         <div className='game'>
-          <h3 className='message'>{message}</h3>
-          {grid.length === 0 && <h1 style={{color: guessesLeft.length === 0 ? '#ec644b' : '#A0C35A'}}className='result-message'>{guessesLeft.length === 0 ? "You've Failed 👺" : "You Won 🐸"}</h1>}
+          {grid.length > 0 && <h3 className='message'>{message}</h3>}
+          {grid.length === 0 && correctGroups.length > 0 && <h1 style={{color: guessesLeft.length === 0 ? '#E1453F' : '#A0C35A'}}className='result-message'>{guessesLeft.length === 0 ? "You've Failed 👺" : "You Won 🐸"}</h1>}
           {correctGroups.map((group) => {
             return <CorrectGroup choices={[...group]} groupKey={keyMap[group[0].key]} key={group[0].key}/>
           })}

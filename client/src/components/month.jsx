@@ -6,12 +6,13 @@ import './archive.css';
 
 function Month({ month, user }) {
 
+  const DATABASE_URL = process.env.REACT_APP_API_URL
   const START_DATE = new Date(2024, 7, 18);
   const TODAYS_DATE = new Date();
 
   useEffect(() => {
     const controller = new AbortController()
-    axios.get(`http://localhost:3500/attempts/`, { params: { date: month.toLocaleDateString(), user: user }, signal: controller.signal})
+    axios.get(`${DATABASE_URL}attempts`, { params: { date: month.toLocaleDateString(), user: user }, signal: controller.signal})
     .then(response => {
       setWins(response.data.wins)
       setFails(response.data.fails)

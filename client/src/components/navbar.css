@@ -17,6 +17,11 @@
   font-weight: bold;
 }
 
+.title:hover {
+  color: lightgrey;
+  font-weight: 680;
+}
+
 .sign-in {
   background: none;
   color: white;
@@ -26,6 +31,12 @@
   outline: 1px solid white;
   height: 80px;
   width: 160px;
+}
+
+.sign-in:hover {
+  color: lightgrey;
+  outline: 1px solid lightgrey;
+  font-weight: 600;
 }
 
 .cl-userButtonTrigger, .cl-userButtonBox, .cl-avatarBox {
@@ -43,6 +54,8 @@
 
 .archive-button:hover {
   cursor: pointer;
+  color: lightgrey;
+  font-weight: 670;
 }
 
 .home-button {
