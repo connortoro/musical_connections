@@ -106,26 +106,26 @@ db_connect()
 
 // const newGrid = {
 //   grid: [
-//     [{"text": "Für Elise", "key": 1}, {"text": "Eine kleine Nachtmusik", "key": 2}, {"text": "So What", "key": 3}, {"text": "Nocturne in E-flat major", "key": 4}],
-//     [{"text": "Symphony No. 5", "key": 1}, {"text": "The Magic Flute", "key": 2}, {"text": "Blue in Green", "key": 3}, {"text": "Fantaisie-Impromptu", "key": 4}],
-//     [{"text": "Moonlight Sonata", "key": 1}, {"text": "Symphony No. 40", "key": 2}, {"text": "All Blues", "key": 3}, {"text": "Funeral March", "key": 4}],
-//     [{"text": "Ode to Joy", "key": 1}, {"text": "Requiem", "key": 2}, {"text": "Round Midnight", "key": 3}, {"text": "Minute Waltz", "key": 4}]
+//     [{"text": "Lose Yourself", "key": 1}, {"text": "Juicy", "key": 2}, {"text": "In Da Club", "key": 3}, {"text": "Alright", "key": 4}],
+//     [{"text": "The Real Slim Shady", "key": 1}, {"text": "Big Poppa", "key": 2}, {"text": "21 Questions", "key": 3}, {"text": "Swimming Pools", "key": 4}],
+//     [{"text": "Stan", "key": 1}, {"text": "Hypnotize", "key": 2}, {"text": "P.I.M.P.", "key": 3}, {"text": "HUMBLE.", "key": 4}],
+//     [{"text": "Without Me", "key": 1}, {"text": "Mo Money Mo Problems", "key": 2}, {"text": "Candy Shop", "key": 3}, {"text": "DNA.", "key": 4}]
 //   ],
 //   key: {
-//     "1": "Ludwig van Beethoven",
-//     "2": "Wolfgang Amadeus Mozart",
-//     "3": "Miles Davis",
-//     "4": "Frédéric Chopin"
+//     "1": "Eminem",
+//     "2": "The Notorious B.I.G.",
+//     "3": "50 Cent",
+//     "4": "Kendrick Lamar"
 //   },
-//   date: new Date(2024, 7, 25, 17, 0, 0, 0)
+//   date: new Date(2024, 7, 27, 17, 0, 0, 0)
 // };
 
 // const newPuzzle = new puzzleTable(newGrid)
 // newPuzzle.save()
 
 
-module.exports = app;
+app.listen(port, async () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
 
-// app.listen(port, async () => {
-//   console.log(`Server running on http://localhost:${port}`);
-// });
+module.exports = app;

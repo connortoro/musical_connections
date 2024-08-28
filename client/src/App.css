@@ -178,3 +178,49 @@ button:hover {
     transform: translateY(-15px);
   }
 }
+
+.bump-down {
+  margin-top: 2px;
+}
+
+.loading-button {
+  background-color: #111111;
+  animation: pulse 1s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.loading2 {
+  animation-delay: .1s;
+}
+
+.loading3 {
+  animation-delay: .2s;
+}
+
+.loading4 {
+  animation-delay: .3s;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn .7s cubic-bezier(0.390, 0.575, 0.565, 1.000);
+}

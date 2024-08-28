@@ -1,6 +1,7 @@
 import '../App.css';
 import { useState, useEffect } from 'react';
 import CorrectGroup from './correct-group';
+import LoadingGrid from './loading-grid';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
@@ -19,6 +20,7 @@ function Game() {
   const [userId, setUserId] = useState();
   const [checkDisabled, setCheckDisabled] = useState(false)
   const [guesses, setGuesses] = useState([])
+  const [isFading, setIsFading] = useState(true);
 
   let { date } = useParams();
   const[puzzleDate, setPuzzleDate] = useState(date ? new Date(date) : new Date())
@@ -184,15 +186,20 @@ function Game() {
   }, [date]);
 
   useEffect(() => {
-    console.log("Requesting: ", `${DATABASE_URL}puzzle/`)
+    
+    console.log("Requesting: ", `${DATABASE_URL}puzzle`)
     const controller = new AbortController()
-    axios.get(`${DATABASE_URL}puzzle/`, { params: { date: puzzleDate.toLocaleDateString() }, signal: controller.signal})
+    axios.get(`${DATABASE_URL}puzzle`, { params: { date: puzzleDate.toLocaleDateString() }, signal: controller.signal})
     .then(puzzleResponse => {
       console.log("PUZZLE: ", puzzleResponse.data)
       setCorrectGroups([])
       setPuzzleId(puzzleResponse.data._id)
       setKeyMap(puzzleResponse.data.key)
       setGrid(shuffleGrid(puzzleResponse.data.grid))
+      setTimeout(() => {
+        setIsFading(false)
+      }, 700);
+      
     })
     .catch(error => console.error('Error:', error));
     return () => controller.abort()
@@ -241,6 +248,14 @@ function Game() {
     return ''
   }
 
+  const fadeInClass = () => {
+    if(isFading) {
+      return 'fade-in'
+    } else {
+      return ''
+    }
+  }
+
   return (
     <div>
       <div className='container'>
@@ -250,11 +265,12 @@ function Game() {
           {correctGroups.map((group) => {
             return <CorrectGroup choices={[...group]} groupKey={keyMap[group[0].key]} key={group[0].key}/>
           })}
+          {grid.length === 0 && correctGroups.length === 0 && <LoadingGrid/>}
           {grid.map((row, rowIdx) => {
             return <div key={rowIdx} className='row'>
               {row.map((cell, colIdx) => {
                 return <button 
-                          className={cellClassName(cell.text) + ' ' + selectedClass(cell.text)} 
+                          className={cellClassName(cell.text) + ' ' + selectedClass(cell.text) + ' ' + fadeInClass()} 
                           key={colIdx} 
                           onClick={() => choose(rowIdx, colIdx)} 
                           >
