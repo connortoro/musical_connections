@@ -245,7 +245,7 @@ function Game() {
     if(choices.some(choice => choice.text === text)) {
       return 'selected'
     }
-    return ''
+    return 'unselected'
   }
 
   const fadeInClass = () => {
@@ -270,7 +270,7 @@ function Game() {
             return <div key={rowIdx} className='row'>
               {row.map((cell, colIdx) => {
                 return <button 
-                          className={cellClassName(cell.text) + ' ' + selectedClass(cell.text) + ' ' + fadeInClass()} 
+                          className={cellClassName(cell.text) + ' ' + selectedClass(cell.text) + ' ' + fadeInClass() + ' cell'} 
                           key={colIdx} 
                           onClick={() => choose(rowIdx, colIdx)} 
                           >

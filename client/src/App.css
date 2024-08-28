@@ -134,7 +134,7 @@ button:hover {
 }
 
 .shake {
-  animation: shake 0.5s ease-in-out;
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
 }
 
 @keyframes shake {
@@ -223,4 +223,14 @@ button:hover {
 
 .fade-in {
   animation: fadeIn .7s cubic-bezier(0.390, 0.575, 0.565, 1.000);
+}
+
+.logo {
+  transform: translateY(15px);
+  height: 50px;
+}
+
+ .unselected.cell:hover {
+  transform: scale(.97, .97);
+  background-color: #EEEEEE;
 }
