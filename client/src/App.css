@@ -35,7 +35,7 @@ button {
   margin-right: 20px;
   margin-bottom: 20px;
   background-color: white;
-  color: black;
+  color: #1B1917;
   font-weight: bold;
 }
 
@@ -62,11 +62,13 @@ button:hover {
 }
 
 @keyframes fadeIn {
-  from {
+  0% {
     opacity: 0;
+    transform: scale(0.95);
   }
-  to {
+  100% {
     opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -188,6 +190,10 @@ button:hover {
   animation: pulse 1s infinite cubic-bezier(0.4, 0, 0.6, 1);
 }
 
+.loading-button:hover {
+  cursor: default;
+}
+
 .loading2 {
   animation-delay: .1s;
 }
@@ -212,15 +218,6 @@ button:hover {
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .fade-in {
   animation: fadeIn .7s cubic-bezier(0.390, 0.575, 0.565, 1.000);
 }
@@ -231,6 +228,20 @@ button:hover {
 }
 
  .unselected.cell:hover {
-  transform: scale(.97, .97);
-  background-color: #EEEEEE;
+  transform: scale(.965, .965);
+  background-color: #E8E6E3;
 }
+
+.shining-text {
+  animation: shine 2s infinite alternate;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+

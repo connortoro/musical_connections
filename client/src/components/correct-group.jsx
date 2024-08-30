@@ -25,7 +25,7 @@ export default function CorrectGroup({groupKey, choices}) {
     }
   
     return (
-      <div className='correct-group' style={{backgroundColor: getColor(choices[0].key)}}>
+      <div className='correct-group fade-in' style={{backgroundColor: getColor(choices[0].key)}}>
         <h4>{groupKey}</h4>
         <p>{getList()}</p>
       </div>

@@ -43,7 +43,7 @@ function Archive() {
   return (
     <div className='archive'>
       <SignedOut>
-        <h1 className='sign-in-message'>{"Please sign in to view the archive :)"}</h1>
+        <h1 className='sign-in-message shining-text'>{"Please sign in to view the archive :)"}</h1>
       </SignedOut>
       <SignedIn>
       <div className='archive-nav-buttons'>
