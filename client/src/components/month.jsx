@@ -57,15 +57,26 @@ function Month({ month, user }) {
     }
   }
 
-   const dayText = (day) => {
-    if(wins.includes(day)) {
-      return '✓'
-    } else if(fails.includes(day)) {
-      return '✗'
-    } else {
-      return day
+  const dayText = (day) => {
+  if(wins.includes(day)) {
+    return '✓'
+  } else if(fails.includes(day)) {
+    return '✗'
+  } else {
+    return day
+  }
+  }
+
+  const isToday = (day) => {
+    console.log("-------------printing day check -----------------")
+    console.log(month.getFullYear() + " === " + TODAYS_DATE.getFullYear())
+    console.log(month.getMonth() + " === " + TODAYS_DATE.getMonth())
+    console.log(day + " === " + TODAYS_DATE.getDate())
+    if(month.getFullYear() === TODAYS_DATE.getFullYear() && month.getMonth() === TODAYS_DATE.getMonth() && day === TODAYS_DATE.getDate()) {
+      return true
     }
-   }
+    return false;
+  }
 
   const DAY_LABELS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const [offset, setOffset] = useState(getDayOffset(month));
@@ -87,7 +98,9 @@ function Month({ month, user }) {
           return <button className='calendar-blank' key={idx}></button>
         })}
         {days.map((day) => {
-          if(isValid(day)) {
+          if(isToday(day)) {
+            return <Link to="/" className={dayClass(day)} key={day}>{dayText(day)}</Link>
+          } else if(isValid(day)) {
             return <Link to={`/puzzle/${getDay(day)}`} className={dayClass(day)} key={day}>{dayText(day)}</Link>
           } else {
             return <button className='invalid-day' key={day}>{day}</button>
